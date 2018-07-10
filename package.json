@@ -1,6 +1,6 @@
 {
   "name": "zb-athena",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "AWS Athena client library wrapper for sending, checking and reformatting query",
   "main": "index.js",
   "scripts": {
