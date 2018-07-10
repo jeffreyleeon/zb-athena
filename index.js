@@ -185,7 +185,6 @@ class ZBAthena {
     for (var i = 1; i < resultRows.length; ++i) {
       var dataRow = resultRows[i].Data || [];
       if (keysRow.length !== dataRow.length) {
-        logger.error('Data row length does not match keys row length', keysRow, dataRow);
         continue;
       }
       let payload = {};
@@ -194,7 +193,6 @@ class ZBAthena {
         var dataColumn = dataRow[j] || {};
         var key = keyColumn.VarCharValue;
         if (!key) {
-          logger.error('keys column does not have value', keysRow, j);
           key = 'DummyKey' + ('' + Math.random()).substring(2,7);
         }
         var value = dataColumn.VarCharValue;
