@@ -163,6 +163,48 @@ class ZBAthena {
     });
   }
 
+  /**
+   * Convert data from Athena query result format to JSON format.
+   *
+   * @method convertQueryResultToJson(data)
+   * @param {JSON} data - query result from Athena or getQueryResults function
+   * @return {Array of JSON} An array with each row as a json.
+   */
+  convertQueryResultToJson(data) {
+    let rows = [];
+    if (!data) {
+      return rows;
+    }
+    data = data || {};
+    const resultSet = data.ResultSet || {};
+    const resultRows = resultSet.Rows || [];
+    if (!Array.isArray(resultRows) || resultRows.length === 0) {
+      return rows;
+    }
+    const keysRow = resultRows[0].Data || [];
+    for (var i = 1; i < resultRows.length; ++i) {
+      var dataRow = resultRows[i].Data || [];
+      if (keysRow.length !== dataRow.length) {
+        logger.error('Data row length does not match keys row length', keysRow, dataRow);
+        continue;
+      }
+      let payload = {};
+      for (var j = 0; j < keysRow.length; ++j) {
+        var keyColumn = keysRow[j] || {};
+        var dataColumn = dataRow[j] || {};
+        var key = keyColumn.VarCharValue;
+        if (!key) {
+          logger.error('keys column does not have value', keysRow, j);
+          key = 'DummyKey' + ('' + Math.random()).substring(2,7);
+        }
+        var value = dataColumn.VarCharValue;
+        payload[key] = value;
+      }
+      rows.push(payload);
+    }
+    return rows;
+  }
+
 }
 
 module.exports = ZBAthena;
