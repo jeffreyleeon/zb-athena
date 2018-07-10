@@ -25,6 +25,17 @@ class ZBAthena {
   }
 
   /**
+   * Get AWS.Athena instance created in constructor.
+   * Open up unimplemented APIs for users.
+   *
+   * @method getInstance()
+   * @return {AWS.Athena} AWS.Athena instance
+   */
+  getInstance() {
+    return this._athena;
+  }
+
+  /**
    * Promisfied aws Athena library function startQueryExecution.
    * Resolving a JSON with QueryExecutionId as stated in aws documentation.
    * https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Athena.html#startQueryExecution-property
