@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/jeffreyleeon/zb-athena/issues"
   },
-  "homepage": "https://github.com/jeffreyleeon/zb-athena#readme"
+  "homepage": "https://github.com/jeffreyleeon/zb-athena#readme",
+  "dependencies": {
+    "aws-sdk": "^2.6.3"
+  }
 }
