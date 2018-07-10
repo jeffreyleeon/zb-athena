@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 const DEFAULT_CONFIGS = {
   'apiVersion': '2017-05-18' // Default API version to 2017
 };
+const QUERY_RUNNING_STATE = 'RUNNING';
 
 /** Class representing a ZBAthena. */
 class ZBAthena {
@@ -58,6 +59,56 @@ class ZBAthena {
   sendQuery(params) {
     return new Promise((resolve, reject) => {
       this._athena.startQueryExecution(params, (err, data) => {
+        if (err) {
+          reject(err); // an error occurred
+        } else {
+          resolve(data); // successfully queue up
+        }
+      });
+    });
+  }
+
+  /**
+   * Check if an Athena query is finished.
+   *
+   * @method isQueryFinished(executionId)
+   * @param executionId - ExecutionId of the query, given when calling sendQuery or startQueryExecution natively.
+   * @return {Promise} a promise that resolve whther the task is finished (boolean) or reject errors.
+   */
+  isQueryFinished(executionId) {
+    return new Promise((resolve, reject) => {
+      this.getQueryExecution(executionId)
+        .then((data) => {
+          try {
+            var status = data.QueryExecution.Status.State;
+            resolve(status !== QUERY_RUNNING_STATE);
+          } catch(err) {
+            resolve(false); // Defensive programming for chained access
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * Get a query execution status using a query request id.
+   *
+   * @method getQueryExecution(executionId)
+   * @param {string} executionId - executionId given when calling sendQuery or startQueryExecution natively.
+   * @return {promise} A promise that resolve query execution status or reject error
+   */
+  getQueryExecution(executionId) {
+    return new Promise((resolve, reject) => {
+      if (!executionId) {
+        reject('Invalid executionId ', executionId);
+        return;
+      }
+      var params = {
+        QueryExecutionId: executionId, /* required */
+      };
+      this._athena.getQueryExecution(params, (err, data) => {
         if (err) {
           reject(err); // an error occurred
         } else {
