@@ -118,6 +118,51 @@ class ZBAthena {
     });
   }
 
+  /**
+   * Get a query execution results using a query request id.
+   *
+   * @method getQueryResults(executionId)
+   * @param {string} executionId - executionId given when calling sendQuery or startQueryExecution natively.
+   * @param {string} nextToken - A token to be used by the next request if this request is truncated, default max pagelength 1000.
+   * @return {promise} A promise that resolve query execution or reject error
+   */
+  getQueryResults(executionId, nextToken) {
+    return new Promise((resolve, reject) => {
+      if (!executionId) {
+        reject('Invalid executionId ', executionId);
+        return;
+      }
+      var params = {
+        QueryExecutionId: executionId, /* required */
+      };
+      if (!!nextToken) {
+        params.NextToken = nextToken;
+      }
+      this._athena.getQueryResults(params, (err, data) => {
+        if (err) {
+          reject(err); // an error occurred
+        } else {
+          if (!!data.NextToken) {
+            var resultSet = data.ResultSet || {};
+            var resultRows = resultSet.Rows || [];
+            resolve(
+              this.getQueryResults(executionId, data.NextToken)
+                .then(function(nextBatchData) {
+                  var nextBatchResultSet = nextBatchData.ResultSet || {};
+                  var nextBatchResultRows = nextBatchResultSet.Rows || [];
+                  var rows = resultRows.concat(nextBatchResultRows);
+                  nextBatchData.ResultSet.Rows = rows;
+                  return nextBatchData;
+                })
+            );
+            return;
+          }
+          resolve(data); // successfully queue up
+        }
+      });
+    });
+  }
+
 }
 
 module.exports = ZBAthena;
