@@ -1,0 +1,23 @@
+{
+  "name": "zb-athena",
+  "version": "1.0.0",
+  "description": "AWS Athena client library wrapper for sending, checking and reformatting query",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffreyleeon/zb-athena.git"
+  },
+  "keywords": [
+    "athena",
+    "aws"
+  ],
+  "author": "Jeffrey LEE",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffreyleeon/zb-athena/issues"
+  },
+  "homepage": "https://github.com/jeffreyleeon/zb-athena#readme"
+}
